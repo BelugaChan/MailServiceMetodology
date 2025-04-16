@@ -1,0 +1,45 @@
+﻿using MailServiceMetodology.Models;
+using Microsoft.Extensions.Options;
+using MimeKit;
+using MailServiceMetodology.Abstract;
+
+namespace MailServiceMetodology.Services
+{
+    public class TwoFaEmailService : EMailServiceBase<RabbitMqTwoFaConsumer, string>
+    {
+        private readonly SmtpOptions options;
+        public TwoFaEmailService(IOptions<SmtpOptions> options) : base(options)
+        {
+            this.options = options.Value;
+        }
+
+        protected override string HtmlPath => "D:\\MailServiceMetodology\\Templates";
+
+        public async override Task<MimeMessage> GenerateMailContent(RabbitMqTwoFaConsumer consumer)
+        {
+            using MimeMessage mailMessage = new MimeMessage();
+
+            mailMessage.From.Add(new MailboxAddress("Publisher", options.From));
+            mailMessage.To.Add(new MailboxAddress("test", consumer.Email));
+            mailMessage.Subject = "Two fa code!";
+
+            var bodyBuilder = new BodyBuilder
+            {
+                HtmlBody = await GetHtmlTemplate(consumer.Code, "mailTwoFa.html")
+            };
+            mailMessage.Body = bodyBuilder.ToMessageBody();
+
+            return mailMessage;
+        }
+
+        public async override Task<string> GetHtmlTemplate(string code, string htmlTemplateName)
+        {
+            string path = Path.Combine(HtmlPath, htmlTemplateName);
+            if (!File.Exists(path))
+                throw new FileNotFoundException($"Email template not found at {path}");
+
+            string res = await File.ReadAllTextAsync(path);
+            return res.Replace("{code}", code);
+        }
+    }
+}

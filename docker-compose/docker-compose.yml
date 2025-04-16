@@ -1,0 +1,16 @@
+﻿name: mailService
+services:
+  mailService:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    networks:
+      - mailNetwork
+    restart: always
+    depends_on:
+      paperCutsmtp:
+        condition: service_started
+networks:
+  mailNetwork:
+    name: mailNetwork
+    driver: bridge

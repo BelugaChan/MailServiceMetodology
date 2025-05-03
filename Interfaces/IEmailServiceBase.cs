@@ -10,5 +10,7 @@ namespace MailServiceMetodology.Interfaces
         Task<MimeMessage> GenerateMailContent(T consumer);
 
         Task<string> GetHtmlTemplate(U data, string htmlTemplateName);
+
+        void DisposeMimeMessage(MimeMessage mimeMessage);
     }
 }

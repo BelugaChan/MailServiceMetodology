@@ -1,16 +1,14 @@
-﻿name: mailService
+﻿name: mailmetodologyervice
 services:
-  mailService:
+  mailservice:
     build:
       context: ..
       dockerfile: Dockerfile
     networks:
-      - mailNetwork
-    restart: always
-    depends_on:
-      paperCutsmtp:
-        condition: service_started
+      - mailNet
 networks:
-  mailNetwork:
-    name: mailNetwork
+  mailNet:
+    name: mailNet
     driver: bridge
+    external: true
+    

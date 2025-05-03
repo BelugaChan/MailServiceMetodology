@@ -5,30 +5,32 @@ using MailServiceMetodology.Abstract;
 
 namespace MailServiceMetodology.Services
 {
-    public class TwoFaEmailService : EMailServiceBase<RabbitMqTwoFaConsumer, string>
+    public class VerificationCodeEmailService : EMailServiceBase<RabbitMqTwoFaConsumer, string>
     {
         private readonly SmtpOptions options;
-        public TwoFaEmailService(IOptions<SmtpOptions> options) : base(options)
+        private readonly IHostEnvironment env;
+        public VerificationCodeEmailService(IOptions<SmtpOptions> options, IHostEnvironment env) : base(options)
         {
             this.options = options.Value;
+            this.env = env;
         }
 
-        protected override string HtmlPath => "D:\\MailServiceMetodology\\Templates";
+        protected override string HtmlPath => Path.Combine(env.ContentRootPath, "Templates");
 
         public async override Task<MimeMessage> GenerateMailContent(RabbitMqTwoFaConsumer consumer)
         {
-            using MimeMessage mailMessage = new MimeMessage();
+            MimeMessage mailMessage = new MimeMessage();
 
             mailMessage.From.Add(new MailboxAddress("Publisher", options.From));
             mailMessage.To.Add(new MailboxAddress("test", consumer.Email));
-            mailMessage.Subject = "Two fa code!";
+            mailMessage.Subject = "Verification code!";
 
             var bodyBuilder = new BodyBuilder
             {
-                HtmlBody = await GetHtmlTemplate(consumer.Code, "mailTwoFa.html")
+                HtmlBody = await GetHtmlTemplate(consumer.Code, "mailVerificationCode.html")
             };
             mailMessage.Body = bodyBuilder.ToMessageBody();
-
+            
             return mailMessage;
         }
 

@@ -8,12 +8,14 @@ namespace MailServiceMetodology.Services
     public class ResetPasswordEmailService : EMailServiceBase<RabbitMqResetPasswordConsumer, string>
     {
         private readonly SmtpOptions options;
-        public ResetPasswordEmailService(IOptions<SmtpOptions> options) : base(options)
+        private readonly IHostEnvironment env;
+        public ResetPasswordEmailService(IOptions<SmtpOptions> options, IHostEnvironment env) : base(options)
         {
             this.options = options.Value;
+            this.env = env;
         }
 
-        protected override string HtmlPath => "D:\\MailServiceMetodology\\Templates";
+        protected override string HtmlPath => Path.Combine(env.ContentRootPath, "Templates");
 
         public async override Task<MimeMessage> GenerateMailContent(RabbitMqResetPasswordConsumer consumer)
         {
@@ -25,7 +27,7 @@ namespace MailServiceMetodology.Services
 
             var bodyBuilder = new BodyBuilder
             {
-                HtmlBody = await GetHtmlTemplate(consumer.Link, "mailTwoFa.html")
+                HtmlBody = await GetHtmlTemplate(consumer.Link, "mailResetPassword.html")
             };
             mailMessage.Body = bodyBuilder.ToMessageBody();
 

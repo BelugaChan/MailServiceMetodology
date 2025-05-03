@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="MailKit" Version="4.11.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.3.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
@@ -20,11 +21,20 @@
 
   <ItemGroup>
     <Reference Include="RabbitMqListener">
-      <HintPath>..\RabbitMqLib\RabbitMqListener\bin\Debug\net8.0\RabbitMqListener.dll</HintPath>
+      <HintPath>DLL\RabbitMqListener.dll</HintPath>
     </Reference>
     <Reference Include="RabbitMqModel">
-      <HintPath>..\RabbitMqLib\RabbitMqModel\bin\Debug\net8.0\RabbitMqModel.dll</HintPath>
+      <HintPath>DLL\RabbitMqModel.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Templates\mailResetPassword.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Templates\mailVerificationCode.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

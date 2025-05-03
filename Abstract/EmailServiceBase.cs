@@ -32,6 +32,7 @@ namespace MailServiceMetodology.Abstract
                 var mailMessage = await GenerateMailContent(consumer);
 
                 await smtpClient.SendAsync(mailMessage);
+                DisposeMimeMessage(mailMessage);
                 Console.WriteLine("Message was send successfully!");
             }
             catch (Exception ex)
@@ -47,5 +48,10 @@ namespace MailServiceMetodology.Abstract
         public abstract Task<MimeMessage> GenerateMailContent(T consumer);
 
         public abstract Task<string> GetHtmlTemplate(U data, string htmlTemplateName);
+
+        public virtual void DisposeMimeMessage(MimeMessage mimeMessage)
+        {
+            mimeMessage.Dispose();
+        }
     }
 }
